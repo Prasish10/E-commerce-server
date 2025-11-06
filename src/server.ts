@@ -1,6 +1,7 @@
 import "dotenv/config";
-import express from "express";
-import { connect_DB } from "./config/db.config.js";
+import express, { NextFunction, Request, Response } from "express";
+import { connect_DB } from "./config/db.config";
+import { errorHandler } from "./middlewares/error_handler.middleware";
 
 // express app instance
 const PORT = process.env.PORT || 5000;
@@ -8,7 +9,7 @@ const app = express();
 
 connect_DB();
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     message: "server is up and running ",
     status: "success",
@@ -16,6 +17,19 @@ app.get("/", (req, res) => {
   });
 });
 
+//! handling path fallback error
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const message = `Can not ${req.method}on ${req.originalUrl}`;
+  const error: any = new Error(message);
+  error.status = "fail";
+  error.statuscode = 400;
+  console.log(error);
+
+  next(error);
+});
+
 app.listen(PORT, () => {
   console.log(`server is running at http://localhost:${PORT}`);
 });
+
+app.use(errorHandler);
