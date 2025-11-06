@@ -1,0 +1,19 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    // File Layout
+    "rootDir": "./src",
+    "outDir": "./build",
+
+    "module": "commonjs",
+    "target": "es2020",
+    "types": [],
+    // Stricter Typechecking Options
+    "esModuleInterop": true,
+    // Recommended Options
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules"],
+  "include": ["./src/"]
+}
