@@ -3,11 +3,16 @@ import express, { NextFunction, Request, Response } from "express";
 import { connect_DB } from "./config/db.config";
 import { errorHandler } from "./middlewares/error_handler.middleware";
 
+import authRoutes from "./routes/auth.route";
+
 // express app instance
 const PORT = process.env.PORT || 5000;
 const app = express();
 
 connect_DB();
+
+//* middleware
+app.use(express.json({ limit: "5mb" }));
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
@@ -16,6 +21,9 @@ app.get("/", (req: Request, res: Response) => {
     success: true,
   });
 });
+
+//*using routes
+app.use("/api/auth", authRoutes);
 
 //! handling path fallback error
 app.use((req: Request, res: Response, next: NextFunction) => {
