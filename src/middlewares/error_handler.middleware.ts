@@ -1,5 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 
+class CustomError extends Error {
+  status: "error" | "fail";
+  statuscode: number;
+  isOperational: boolean;
+  constructor(message: string, statusCode: number) {
+    super(message);
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
+    this.statuscode = statusCode;
+    this.isOperational = true;
+
+    Error.captureStackTrace(this, CustomError);
+  }
+}
 export const errorHandler = (
   error: any,
   req: Request,
@@ -16,3 +29,5 @@ export const errorHandler = (
     originError: error?.stack,
   });
 };
+
+export default CustomError;
