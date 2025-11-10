@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/user.model";
 import { comparePassword, hashPassword } from "../utils/bcrypt.utils";
+import CustomError from "../middlewares/error_handler.middleware";
 
 //? register user
 export const register = async (
@@ -11,9 +12,9 @@ export const register = async (
   try {
     const { first_name, last_name, email, password, phone } = req.body;
     if (!password) {
-      const error: any = new Error("password is required");
-      error.statusCode = 400;
-      throw error;
+      // const error: any = new Error("password is required");
+      // error.statusCode = 400;
+      throw new CustomError("pass is required", 400);
     }
     const user = new User({
       first_name,
@@ -50,35 +51,35 @@ export const login = async (
     const { email, password } = req.body;
 
     if (!email) {
-      const error: any = new Error("email is required");
-      error.status = "fail";
-      error.statusCode = 400;
-      throw error;
+      // const error: any = new Error("email is required");
+      // error.status = "fail";
+      // error.statusCode = 400;
+      throw new CustomError("email is required", 400);
     }
     if (!password) {
-      const error: any = new Error("pass is required");
-      error.status = "fail";
-      error.statusCode = 400;
-      throw error;
+      // const error: any = new Error("pass is required");
+      // error.status = "fail";
+      // error.statusCode = 400;
+      throw new CustomError("pass is required", 4001);
     }
 
     //! check if user exists
     const user = await User.findOne({ email });
 
     if (!user) {
-      const error: any = new Error("email or pass does not match");
-      error.status = "fail";
-      error.statusCode = 400;
-      throw error;
+      // const error: any = new Error("email or pass does not match");
+      // error.status = "fail";
+      // error.statusCode = 400;
+      throw new CustomError("email or pass does not match", 400);
     }
     //! compare password
     const isPassMatch = await comparePassword(password, user?.password || "");
 
     if (!isPassMatch) {
-      const error: any = new Error("email or pass does not match");
-      error.status = "fail";
-      error.statusCode = 400;
-      throw error;
+      // const error: any = new Error("email or pass does not match");
+      // error.status = "fail";
+      // error.statusCode = 400;
+      throw new CustomError("email or pass does not match", 400);
     }
     //! generate jwt token
 

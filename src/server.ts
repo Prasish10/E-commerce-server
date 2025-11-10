@@ -1,9 +1,12 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import { connect_DB } from "./config/db.config";
-import { errorHandler } from "./middlewares/error_handler.middleware";
+import CustomError, {
+  errorHandler,
+} from "./middlewares/error_handler.middleware";
 
 import authRoutes from "./routes/auth.route";
+import categoryRoutes from "./routes/category.route";
 
 // express app instance
 const PORT = process.env.PORT || 5000;
@@ -24,16 +27,22 @@ app.get("/", (req: Request, res: Response) => {
 
 //*using routes
 app.use("/api/auth", authRoutes);
+app.use("/api/categories", categoryRoutes);
 
 //! handling path fallback error
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//   const message = `Can not ${req.method}on ${req.originalUrl}`;
+//   const error: any = new Error(message);
+//   error.status = "fail";
+//   error.statuscode = 400;
+//   console.log(error);
+
+//   next(error);
+// });
+
 app.use((req: Request, res: Response, next: NextFunction) => {
   const message = `Can not ${req.method}on ${req.originalUrl}`;
-  const error: any = new Error(message);
-  error.status = "fail";
-  error.statuscode = 400;
-  console.log(error);
-
-  next(error);
+  next(new CustomError(message, 400));
 });
 
 app.listen(PORT, () => {
