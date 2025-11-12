@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import User from "../models/user.model";
 import { comparePassword, hashPassword } from "../utils/bcrypt.utils";
 import CustomError from "../middlewares/error_handler.middleware";
+import { upload } from "../utils/cloudinary.utils";
+import { asyncHandler } from "../utils/asynchandler.utils";
 
 //? register user
 export const register = async (
@@ -11,6 +13,8 @@ export const register = async (
 ) => {
   try {
     const { first_name, last_name, email, password, phone } = req.body;
+    const file = req.file;
+    console.log(file);
     if (!password) {
       // const error: any = new Error("password is required");
       // error.statusCode = 400;
@@ -26,7 +30,13 @@ export const register = async (
     user.password = hashPass;
 
     //! image
-
+    if (file) {
+      const { path, public_id } = await upload(file?.path, "/profile_images");
+      user.profile_image = {
+        path,
+        public_id,
+      };
+    }
     //! save user
     await user.save();
 
