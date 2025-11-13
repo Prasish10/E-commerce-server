@@ -1,31 +1,31 @@
 import CustomError from "../middlewares/error_handler.middleware";
-import Category from "../models/category.model";
+import Brand from "../models/brand.model";
 import { asyncHandler } from "../utils/asynchandler.utils";
 import { Request, Response } from "express";
 import { deleteFile, upload } from "../utils/cloudinary.utils";
-import cloudinary from "../config/cloudinary.config";
 
-const dir = "/categories";
+const dir = "/brand";
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
-  const categories = await Category.find({});
+  const brand = await Brand.find({});
 
   res.status(200).json({
-    message: "category fetched",
+    message: "brand fetched",
     status: "success",
-    data: categories,
+    data: brand,
   });
 });
+
 export const getById = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const category = await Category.findOne({ _id: id });
+  const brand = await Brand.findOne({ _id: id });
 
-  if (!category) {
-    throw new CustomError("category not found", 404);
+  if (!brand) {
+    throw new CustomError("brand not found", 404);
   }
   res.status(200).json({
-    message: "category fetched",
+    message: "brand fetched",
     status: "success",
-    data: category,
+    data: brand,
   });
 });
 
@@ -36,77 +36,71 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   if (!file) {
     throw new CustomError("image is required", 400);
   }
-  const category = new Category({ name, description });
+  const brand = new Brand({ name, description });
   const { path, public_id } = await upload(file.path, dir);
 
-  category.image = {
+  brand.image = {
     path,
     public_id,
   };
-  category.save();
+  brand.save();
 
   res.status(200).json({
-    message: "category created",
+    message: "brand created",
     status: "success",
-    data: category,
+    data: brand,
   });
 });
-
-// export const update = asyncHandler(async (req: Request, res: Response) => {
-//   const { _id, name, description } = req.body;
-// });
-
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, description } = req.body;
   const file = req.file;
 
-  const category = await Category.findOne({ _id: id });
-  if (!category) {
-    throw new CustomError("category not found", 404);
+  const brand = await Brand.findOne({ _id: id });
+  if (!brand) {
+    throw new CustomError("brand not found", 404);
   }
   if (name) {
-    category.name = name;
+    brand.name = name;
   }
   if (description) {
-    category.description = description;
+    brand.description = description;
   }
   if (file) {
-    if (category.image) {
+    if (brand.image) {
       // delete old image
-      await deleteFile(category.image?.public_id as string);
+      await deleteFile(brand.image?.public_id as string);
     }
     // upload new image
     const { path, public_id } = await upload(file.path, dir);
 
-    category.image = {
+    brand.image = {
       path,
       public_id,
     };
   }
-  await category.save();
+  await brand.save();
 
   res.status(201).json({
-    message: "category updated",
+    message: "brand updated",
     status: "success",
-    data: category,
+    data: brand,
   });
 });
-
 export const remove = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const category = await Category.findById(id);
-  if (!category) {
-    throw new CustomError("category not found", 404);
+  const brand = await Brand.findById(id);
+  if (!brand) {
+    throw new CustomError("brand not found", 404);
   }
-  if (category.image) {
-    await deleteFile(category.image.public_id as string);
+  if (brand.image) {
+    await deleteFile(brand.image.public_id as string);
   }
-  await category.deleteOne();
+  await brand.deleteOne();
 
   res.status(200).json({
-    message: "category deleted successfully",
+    message: "brand deleted successfully",
     status: "success",
     data: null,
   });

@@ -5,7 +5,7 @@ import {
   getById,
   remove,
   update,
-} from "../controllers/category.controller";
+} from "../controllers/brand.controller";
 import { uploadFile } from "../middlewares/multer.middleware";
 
 const router = express.Router();

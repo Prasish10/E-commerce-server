@@ -7,7 +7,7 @@ import CustomError, {
 
 import authRoutes from "./routes/auth.route";
 import categoryRoutes from "./routes/category.route";
-
+import brandRoutes from "./routes/brand.route";
 // express app instance
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -29,6 +29,7 @@ app.get("/", (req: Request, res: Response) => {
 //*using routes
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/brand", brandRoutes);
 
 //! handling path fallback error
 // app.use((req: Request, res: Response, next: NextFunction) => {
