@@ -4,6 +4,7 @@ import { comparePassword, hashPassword } from "../utils/bcrypt.utils";
 import CustomError from "../middlewares/error_handler.middleware";
 import { upload } from "../utils/cloudinary.utils";
 import { asyncHandler } from "../utils/asynchandler.utils";
+import { generateToken } from "../utils/jwt.utils";
 
 //? register user
 export const register = async (
@@ -14,7 +15,7 @@ export const register = async (
   try {
     const { first_name, last_name, email, password, phone } = req.body;
     const file = req.file;
-    console.log(file);
+
     if (!password) {
       // const error: any = new Error("password is required");
       // error.statusCode = 400;
@@ -92,12 +93,30 @@ export const login = async (
       throw new CustomError("email or pass does not match", 400);
     }
     //! generate jwt token
-
-    res.status(201).json({
-      message: "login sucessful",
-      status: "success",
-      data: user,
+    const access_token = generateToken({
+      _id: user._id,
+      email: user.email as string,
+      first_name: user.first_name as string,
+      last_name: user.last_name as string,
+      role: user.role,
     });
+    // const access_token=generateToken(payload)
+
+    res
+      .cookie("access_token", access_token, {
+        sameSite: "none",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "development" ? false : true,
+        maxAge:
+          Number(process.env.COOKIE_EXPIRES_IN || "7") * 24 * 60 * 60 * 1000,
+      })
+      .status(201)
+      .json({
+        message: "login sucessful",
+        status: "success",
+        data: user,
+        access_token,
+      });
   } catch (error) {
     next(error);
   }
