@@ -8,13 +8,18 @@ import CustomError, {
 import authRoutes from "./routes/auth.route";
 import categoryRoutes from "./routes/category.route";
 import brandRoutes from "./routes/brand.route";
-// express app instance
+import cookieparser from "cookie-parser";
+
 const PORT = process.env.PORT || 5000;
+
+// express app instance
 const app = express();
 
+// connect database
 connect_DB();
 
 //* middleware
+app.use(cookieparser());
 app.use(express.json({ limit: "5mb" }));
 app.use("/api/uploads", express.static("uploads"));
 

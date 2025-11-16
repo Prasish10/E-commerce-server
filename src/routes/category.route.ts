@@ -7,6 +7,7 @@ import {
   update,
 } from "../controllers/category.controller";
 import { uploadFile } from "../middlewares/multer.middleware";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const router = express.Router();
 const upload = uploadFile();
@@ -15,7 +16,7 @@ const upload = uploadFile();
 router.get("/", getAll);
 
 // create
-router.post("/", upload.single("image"), create);
+router.post("/", upload.single("image"), authenticate(), create);
 
 // id
 router.get("/:id", getById);
