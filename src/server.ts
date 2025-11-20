@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.route";
 import categoryRoutes from "./routes/category.route";
 import brandRoutes from "./routes/brand.route";
 import cookieparser from "cookie-parser";
+import productRoutes from "./routes/product.route";
 
 const PORT = process.env.PORT || 5000;
 
@@ -35,6 +36,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/brand", brandRoutes);
+app.use("/api/products", productRoutes);
 
 //! handling path fallback error
 // app.use((req: Request, res: Response, next: NextFunction) => {

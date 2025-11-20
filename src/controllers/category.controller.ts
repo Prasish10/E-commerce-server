@@ -1,76 +1,87 @@
-import CustomError from "../middlewares/error_handler.middleware";
-import Category from "../models/category.model";
-import { asyncHandler } from "../utils/asynchandler.utils";
 import { Request, Response } from "express";
+import { asyncHandler } from "../utils/asynchandler.utils";
+import Category from "../models/category.model";
+import CustomError from "../middlewares/error_handler.middleware";
 import { deleteFile, upload } from "../utils/cloudinary.utils";
-import cloudinary from "../config/cloudinary.config";
 
 const dir = "/categories";
+
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
   const categories = await Category.find({});
 
   res.status(200).json({
-    message: "category fetched",
+    message: "Category fetched",
     status: "success",
     data: categories,
   });
 });
+
+//* get by id
 export const getById = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const category = await Category.findOne({ _id: id });
+  const { category_id } = req.params; // id = req.params.id
+
+  const category = await Category.findOne({ _id: category_id });
 
   if (!category) {
-    throw new CustomError("category not found", 404);
+    throw new CustomError("Category not found", 404);
   }
+
   res.status(200).json({
-    message: "category fetched",
+    message: "Category fetched",
     status: "success",
     data: category,
   });
 });
 
+//* create
 export const create = asyncHandler(async (req: Request, res: Response) => {
+  // check for cookie
+
   const { name, description } = req.body;
   const file = req.file;
 
   if (!file) {
     throw new CustomError("image is required", 400);
   }
+
   const category = new Category({ name, description });
+
   const { path, public_id } = await upload(file.path, dir);
 
   category.image = {
     path,
     public_id,
   };
+
   category.save();
 
-  res.status(200).json({
-    message: "category created",
-    status: "success",
+  res.status(201).json({
+    message: "Category created",
     data: category,
+    status: "success",
   });
 });
 
-// export const update = asyncHandler(async (req: Request, res: Response) => {
-//   const { _id, name, description } = req.body;
-// });
-
+// update
 export const update = asyncHandler(async (req: Request, res: Response) => {
+  //
   const { id } = req.params;
   const { name, description } = req.body;
   const file = req.file;
 
   const category = await Category.findOne({ _id: id });
+
   if (!category) {
-    throw new CustomError("category not found", 404);
+    throw new CustomError("Category not found", 404);
   }
+
   if (name) {
     category.name = name;
   }
   if (description) {
     category.description = description;
   }
+
   if (file) {
     if (category.image) {
       // delete old image
@@ -78,36 +89,41 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     }
     // upload new image
     const { path, public_id } = await upload(file.path, dir);
-
     category.image = {
       path,
       public_id,
     };
   }
+
   await category.save();
 
   res.status(201).json({
-    message: "category updated",
-    status: "success",
+    message: "Category updated",
     data: category,
+    status: "success",
   });
 });
+
+//* delete
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
   const category = await Category.findById(id);
+
   if (!category) {
-    throw new CustomError("category not found", 404);
+    throw new CustomError("Category not found", 404);
   }
+
   if (category.image) {
     await deleteFile(category.image.public_id as string);
   }
+
   await category.deleteOne();
 
   res.status(200).json({
-    message: "category deleted successfully",
-    status: "success",
+    message: "Category deleted",
     data: null,
+    status: "sucess",
   });
 });

@@ -13,3 +13,12 @@ export const jwt_config = {
   secret: process.env.JWT_SECRET as string,
   expries_in: process.env.JWT_EXPIRES_IN as string,
 };
+
+export const smtp_config = {
+  host: process.env.SMTP_HOST as string,
+  port: process.env.SMTP_PORT as string,
+  secure: process.env.SMTP_PORT as string,
+  service: process.env.SMTP_SERVICE as string,
+  user: process.env.SMTP_USER as string,
+  pass: process.env.SMTP_PASS as string,
+};

@@ -1,7 +1,6 @@
 import jwt, { JwtPayload, TokenExpiredError, verify } from "jsonwebtoken";
 import { IPayload } from "../@types/interfce.types";
 import { jwt_config } from "../config/config";
-import { json } from "express";
 
 export const generateToken = (payload: IPayload) => {
   try {

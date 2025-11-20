@@ -5,6 +5,7 @@ import CustomError from "../middlewares/error_handler.middleware";
 import { upload } from "../utils/cloudinary.utils";
 import { asyncHandler } from "../utils/asynchandler.utils";
 import { generateToken } from "../utils/jwt.utils";
+import { sendEmail } from "../utils/nodemailer.utils";
 
 //? register user
 export const register = async (
@@ -101,7 +102,11 @@ export const login = async (
       role: user.role,
     });
     // const access_token=generateToken(payload)
-
+    await sendEmail({
+      html: "<h1>login successfully</h1>",
+      subject: "login to account",
+      to: user?.email || "",
+    });
     res
       .cookie("access_token", access_token, {
         sameSite: "none",

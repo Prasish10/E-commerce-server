@@ -15,11 +15,13 @@ const upload = uploadFile();
 // get all
 router.get("/", getAll);
 
+// id
+router.get("/:id", getById);
+
 // create
 router.post("/", upload.single("image"), authenticate(), create);
 
-// id
-router.get("/:id", getById);
+router.get("/:category_id", getById);
 
 // update
 router.put("/:id", upload.single("image"), update);
