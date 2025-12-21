@@ -10,6 +10,7 @@ import categoryRoutes from "./routes/category.route";
 import brandRoutes from "./routes/brand.route";
 import cookieparser from "cookie-parser";
 import productRoutes from "./routes/product.route";
+import cors from "cors";
 
 const PORT = process.env.PORT || 5000;
 
@@ -20,6 +21,11 @@ const app = express();
 connect_DB();
 
 //* middleware
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(cookieparser());
 app.use(express.json({ limit: "5mb" }));
 app.use("/api/uploads", express.static("uploads"));

@@ -8,6 +8,7 @@ import {
 } from "../controllers/category.controller";
 import { uploadFile } from "../middlewares/multer.middleware";
 import { authenticate } from "../middlewares/auth.middleware";
+import { Role } from "../@types/enum.types";
 
 const router = express.Router();
 const upload = uploadFile();
@@ -19,14 +20,14 @@ router.get("/", getAll);
 router.get("/:id", getById);
 
 // create
-router.post("/", upload.single("image"), authenticate(), create);
+router.post("/", upload.single("image"), authenticate([Role.ADMIN]), create);
 
 router.get("/:category_id", getById);
 
 // update
-router.put("/:id", upload.single("image"), update);
+router.put("/:id", upload.single("image"), authenticate([Role.ADMIN]), update);
 
 // delete
-router.delete("/:id", remove);
+router.delete("/:id", authenticate([Role.ADMIN]), remove);
 
 export default router;

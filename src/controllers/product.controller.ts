@@ -5,12 +5,15 @@ import CustomError from "../middlewares/error_handler.middleware";
 import { deleteFile, upload } from "../utils/cloudinary.utils";
 import Brand from "../models/brand.model";
 import Category from "../models/category.model";
+import { populate } from "dotenv";
 
 const dir = "/products";
 
 //get all
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
-  const products = await Product.find({});
+  const products = await Product.find({})
+    .populate("category")
+    .populate("brand");
 
   res.status(200).json({
     data: products,
@@ -230,5 +233,10 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // get by category
+
 // get featured products
+
 // get new arrival products
+// export const getNewArrivals = asyncHandler(
+//   async (req: Request, res: Response) => {.populate('category')}
+// );

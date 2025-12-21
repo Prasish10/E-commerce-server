@@ -43,6 +43,12 @@ export const authenticate = () => {
         });
         throw new CustomError("Unauthorized. access denied", 401);
       }
+
+      // role based auth
+      if (roles && roles.length > 0 && !roles.includes(user.role)) {
+        throw new CustomError("forbitten.Access denied", 403);
+      }
+
       next(); // sab thik xa vanne xordine
     } catch (error) {
       next(error);
